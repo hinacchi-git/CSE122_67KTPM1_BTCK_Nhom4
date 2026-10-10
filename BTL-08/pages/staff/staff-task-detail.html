@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Nhiệm Vụ Vận Hành | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+  <style>
+    .checklist-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-subtle);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      user-select: none;
+      transition: all var(--transition-fast);
+    }
+    .checklist-item.checked {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .photo-proof-box {
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      background: #fafafa;
+      transition: all var(--transition-fast);
+      margin-bottom: 20px;
+    }
+    .photo-proof-box:hover {
+      border-color: var(--primary-teal);
+      background: #f0fdfa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">🧹</div>
+        <span>StayFlow</span>
+        <span class="brand-badge" style="background: rgba(59, 130, 246, 0.3); color: #bfdbfe;">STAFF OPS</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="staff-task-board.html"><span>📋</span> Bảng Việc Kanban</a></li>
+      <li><a href="staff-shift-view.html"><span>⏱️</span> Ca Trực & KPI</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar" style="background: #dbeafe; color: #1e40af;">NVH</div>
+      <div class="user-info">
+        <div class="user-name">Nguyễn Văn Hoàng</div>
+        <div class="user-role-label">Kỹ Thuật Viên Trưởng • Ca Sáng</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1 id="taskTitleHeader">Chi Tiết Nhiệm Vụ Vận Hành</h1>
+        <p>Quy trình kiểm tra tiêu chuẩn buồng phòng & kỹ thuật trước khi bàn giao cho khách</p>
+      </div>
+      <div class="page-actions">
+        <a href="staff-task-board.html" class="btn btn-outline">
+          <span>←</span> Quay Lại Bảng Kanban
+        </a>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; max-width: 860px; margin: 0 auto; gap: 24px;">
+
+      <div class="card">
+        <div class="card-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h3 id="taskTitle">Nhiệm Vụ</h3>
+            <span class="badge" id="taskStatusBadge">Đang Xử Lý</span>
+          </div>
+          <span class="badge badge-vip" id="roomBadge">Phòng 502</span>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Information Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; background: var(--bg-subtle); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+            <div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Mã Nhiệm Vụ:</div>
+              <strong id="lblTaskId" style="color: var(--primary-navy);">-</strong>
+            </div>
+            <div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Thời Gian Gán:</div>
+              <strong id="lblAssignedAt">-</strong>
+            </div>
+            <div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Nhân Viên Tiếp Nhận:</div>
+              <strong id="lblStaffName">-</strong>
+            </div>
+            <div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Cam Kết SLA:</div>
+              <strong id="lblSLA" style="color: var(--primary-teal);">- phút</strong>
+            </div>
+          </div>
+
+          <!-- Notes from dispatcher -->
+          <div class="form-group">
+            <label class="form-label">Chỉ Đạo Từ Quản Lý Ca Trực (Dispatcher):</label>
+            <div id="dispatcherNotesBox" style="background: #fffbeb; border: 1px solid #fef3c7; padding: 12px; border-radius: var(--radius-sm); font-size: var(--font-size-sm); color: #92400e;">
+              -
+            </div>
+          </div>
+
+          <!-- SOP Step Checklist -->
+          <div class="form-group" style="margin-top: 20px;">
+            <label class="form-label">
+              Quy Trình Kiểm Tra Bắt Buộc (SOP Hospitality Checklist):
+            </label>
+            <div class="checklist-container" id="checklistContainer">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Photo Proof Simulator -->
+          <div class="form-group" style="margin-top: 20px;">
+            <label class="form-label">Ảnh Minh Chứng Hoàn Thành (Tiêu chuẩn 5 sao):</label>
+            <div class="photo-proof-box" onclick="simulatePhotoCapture()">
+              <div style="font-size: 2.2rem; margin-bottom: 6px;">📷</div>
+              <strong id="photoStatusText" style="color: var(--primary-teal);">Bấm vào đây để chụp/tải ảnh xác thực buồng phòng</strong>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: 4px;">
+                Đính kèm hình ảnh sau khi sửa chữa xong hoặc khi đồ dùng đã được giao tận tay khách
+              </div>
+            </div>
+          </div>
+
+          <!-- Staff Notes -->
+          <div class="form-group">
+            <label class="form-label">Ghi Chú Kết Quả Xử Lý Của Nhân Viên:</label>
+            <textarea id="staffResultNotes" class="form-textarea" rows="3" placeholder="Ví dụ: Đã kiểm tra đường ống máy lạnh, xử lý thông tắc ống xả nước và lau khô sàn thảm. Khách đã xác nhận nghiệm thu."></textarea>
+          </div>
+
+          <div class="card-footer" style="padding-left: 0; padding-right: 0; background: transparent; border-top: 1px solid var(--border-color);">
+            <a href="staff-task-board.html" class="btn btn-outline">Quay Lại</a>
+            <button type="button" class="btn btn-success btn-lg" id="btnComplete" onclick="completeTask()">
+              <span>✅</span> Xác Nhận Hoàn Thành & Bàn Giao
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    let currentTask = null;
+    let photoUploaded = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('staff');
+      loadTaskDetails();
+    });
+
+    function loadTaskDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const taskId = urlParams.get('taskId');
+
+      const allTasks = StayFlowDB.getTasks();
+      currentTask = allTasks.find(t => t.id === taskId) || allTasks[0];
+
+      if (!currentTask) {
+        StayFlowUI.toast('Không tìm thấy nhiệm vụ!', 'error');
+        return;
+      }
+
+      document.getElementById('taskTitleHeader').textContent = currentTask.title;
+      document.getElementById('taskTitle').textContent = currentTask.title;
+      document.getElementById('roomBadge').textContent = `Phòng ${currentTask.roomNumber}`;
+      document.getElementById('lblTaskId').textContent = currentTask.id;
+      document.getElementById('lblAssignedAt').textContent = currentTask.assignedAt || 'Hôm nay';
+      document.getElementById('lblStaffName').textContent = currentTask.staffName;
+      document.getElementById('lblSLA').textContent = `${currentTask.slaMinutes || 20} phút`;
+      document.getElementById('dispatcherNotesBox').textContent = currentTask.notes || 'Thực hiện dịch vụ theo đúng tiêu chuẩn và thời gian cam kết.';
+
+      let statusBadge = document.getElementById('taskStatusBadge');
+      if (currentTask.status === 'completed') {
+        statusBadge.className = 'badge badge-completed';
+        statusBadge.textContent = 'Đã Hoàn Thành';
+        document.getElementById('btnComplete').disabled = true;
+        document.getElementById('btnComplete').innerHTML = '<span>✅</span> Đã Bàn Giao Thành Công';
+      } else {
+        statusBadge.className = 'badge badge-in-progress';
+        statusBadge.textContent = 'Đang Xử Lý';
+      }
+
+      renderChecklist();
+    }
+
+    function renderChecklist() {
+      const checklist = currentTask.checklist || [
+        { text: 'Tiếp cận phòng và gõ cửa xưng danh theo quy chuẩn', done: true },
+        { text: 'Kiểm tra hiện trạng thiết bị / cấp phát đầy đủ vật tư', done: false },
+        { text: 'Làm sạch khu vực thao tác và xin xác nhận của khách', done: false }
+      ];
+
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = checklist.map((item, idx) => `
+        <div class="checklist-item ${item.done ? 'checked' : ''}" onclick="toggleCheck(${idx})">
+          <input type="checkbox" ${item.done ? 'checked' : ''} onclick="event.stopPropagation(); toggleCheck(${idx})">
+          <span style="font-size: var(--font-size-sm); font-weight: 500;">${item.text}</span>
+        </div>
+      `).join('');
+    }
+
+    function toggleCheck(idx) {
+      if (!currentTask.checklist) {
+        currentTask.checklist = [
+          { text: 'Tiếp cận phòng và gõ cửa xưng danh theo quy chuẩn', done: true },
+          { text: 'Kiểm tra hiện trạng thiết bị / cấp phát đầy đủ vật tư', done: false },
+          { text: 'Làm sạch khu vực thao tác và xin xác nhận của khách', done: false }
+        ];
+      }
+      currentTask.checklist[idx].done = !currentTask.checklist[idx].done;
+      renderChecklist();
+    }
+
+    function simulatePhotoCapture() {
+      photoUploaded = true;
+      document.getElementById('photoStatusText').innerHTML = `
+        <span style="color: var(--status-completed);">✅ Đã chụp và đính kèm ảnh: minh_chung_phong_${currentTask.roomNumber}.jpg (2.4MB)</span>
+      `;
+      StayFlowUI.toast('Đã chụp và tải ảnh minh chứng nghiệm thu thành công!', 'success');
+    }
+
+    function completeTask() {
+      const notes = document.getElementById('staffResultNotes').value.trim() || 'Đã hoàn thành và kiểm tra chất lượng theo chuẩn 5 sao.';
+
+      StayFlowDB.updateTaskStatus(currentTask.id, 'completed', {
+        notes: notes,
+        completedAt: new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5)
+      });
+
+      StayFlowUI.toast(`Tuyệt vời! Nhiệm vụ ${currentTask.id} đã hoàn tất và cập nhật ngay vào bảng theo dõi của Khách & Quản lý.`, 'success');
+
+      setTimeout(() => {
+        window.location.href = 'staff-task-board.html';
+      }, 700);
+    }
+  </script>
+</body>
+</html>

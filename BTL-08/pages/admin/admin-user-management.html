@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Tài Khoản & Phân Quyền | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">⚙️</div>
+        <span>StayFlow</span>
+        <span class="brand-badge" style="background: rgba(255, 255, 255, 0.2); color: #ffffff;">SYSTEM ADMIN</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="admin-dashboard.html"><span>📊</span> Dashboard Quản Trị</a></li>
+      <li><a href="admin-service-type-management.html"><span>🛎️</span> Danh Mục Dịch Vụ & SLA</a></li>
+      <li><a href="admin-user-management.html" class="active"><span>👤</span> Quản Lý Tài Khoản</a></li>
+      <li><a href="admin-room-management.html"><span>🏨</span> Quản Lý Buồng Phòng</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar" style="background: #334155; color: #ffffff;">AD</div>
+      <div class="user-info">
+        <div class="user-name">Ban Quản Trị</div>
+        <div class="user-role-label">System Administrator</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1><span>👤</span> Quản Lý Tài Khoản & Phân Quyền Người Dùng</h1>
+        <p>Phân quyền và quản lý tài khoản 4 vai trò: Khách lưu trú, Nhân viên vận hành, Quản lý ca trực và Quản trị viên</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openAddUserModal()">
+          <span>➕</span> Thêm Tài Khoản Mới
+        </button>
+      </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3><span>📋</span> Danh Sách Tài Khoản Hệ Thống</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã User</th>
+                <th>Tên Đăng Nhập</th>
+                <th>Họ Và Tên</th>
+                <th>Vai Trò (Role)</th>
+                <th>Bộ Phận / Phòng</th>
+                <th>Trạng Thái</th>
+                <th>Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="userModal" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>Thêm Tài Khoản Mới</h3>
+          <button class="modal-close-btn" data-close-modal>&times;</button>
+        </div>
+        <form onsubmit="handleSaveUser(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Tên Đăng Nhập (Username) <span class="required">*</span></label>
+              <input type="text" id="usrUsername" class="form-control" placeholder="VD: staff_tri" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Họ Và Tên <span class="required">*</span></label>
+              <input type="text" id="usrFullname" class="form-control" placeholder="VD: Đỗ Minh Trí" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Vai Trò (Role) <span class="required">*</span></label>
+                <select id="usrRole" class="form-select" required>
+                  <option value="Staff">Nhân Viên Vận Hành (Staff)</option>
+                  <option value="Manager">Quản Lý Khách Sạn (Manager)</option>
+                  <option value="Guest">Khách Lưu Trú (Guest)</option>
+                  <option value="Admin">Quản Trị Viên (Admin)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Bộ Phận / Số Phòng</label>
+                <input type="text" id="usrDept" class="form-control" placeholder="VD: Kỹ thuật hoặc 502">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" data-close-modal>Hủy</button>
+            <button type="submit" class="btn btn-primary"><span>💾</span> Lưu Tài Khoản</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('admin');
+      renderUserTable();
+
+      window.addEventListener('stayflow_storage_updated', renderUserTable);
+    });
+
+    function renderUserTable() {
+      const users = StayFlowDB.getUsers();
+      const tbody = document.getElementById('userTableBody');
+
+      tbody.innerHTML = users.map(u => {
+        let badgeRole = '<span class="badge" style="background:#f1f5f9;">Guest</span>';
+        if (u.role === 'Staff') badgeRole = '<span class="badge badge-in-progress">Staff</span>';
+        if (u.role === 'Manager') badgeRole = '<span class="badge badge-pending">Manager</span>';
+        if (u.role === 'Admin') badgeRole = '<span class="badge" style="background:#0f172a; color:#fff;">Admin</span>';
+
+        return `
+          <tr>
+            <td><strong>${u.id}</strong></td>
+            <td><code>${u.username}</code></td>
+            <td><strong>${u.name}</strong></td>
+            <td>${badgeRole}</td>
+            <td>${u.department || (u.room ? `Phòng ${u.room}` : '-')}</td>
+            <td><span class="badge badge-completed">Hoạt Động</span></td>
+            <td>
+              <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')">
+                <span>✕</span> Xóa
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAddUserModal() {
+      document.getElementById('usrUsername').value = '';
+      document.getElementById('usrFullname').value = '';
+      document.getElementById('usrDept').value = '';
+      StayFlowUI.openModal('userModal');
+    }
+
+    function handleSaveUser(e) {
+      e.preventDefault();
+      const user = {
+        username: document.getElementById('usrUsername').value.trim(),
+        name: document.getElementById('usrFullname').value.trim(),
+        role: document.getElementById('usrRole').value,
+        department: document.getElementById('usrDept').value.trim()
+      };
+
+      StayFlowDB.addUser(user);
+      StayFlowUI.toast(`Đã tạo tài khoản ${user.username} thành công!`, 'success');
+      StayFlowUI.closeModal('userModal');
+      renderUserTable();
+    }
+
+    function deleteUser(id) {
+      if (confirm(`Bạn có chắc muốn xóa tài khoản ${id}?`)) {
+        StayFlowDB.deleteUser(id);
+        StayFlowUI.toast(`Đã xóa tài khoản ${id}!`, 'info');
+        renderUserTable();
+      }
+    }
+  </script>
+</body>
+</html>

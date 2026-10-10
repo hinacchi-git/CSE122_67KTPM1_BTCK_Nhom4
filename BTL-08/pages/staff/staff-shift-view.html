@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông Tin Ca Trực & KPI Nhân Viên | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">🧹</div>
+        <span>StayFlow</span>
+        <span class="brand-badge" style="background: rgba(59, 130, 246, 0.3); color: #bfdbfe;">STAFF OPS</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="staff-task-board.html"><span>📋</span> Bảng Việc Kanban</a></li>
+      <li><a href="staff-shift-view.html" class="active"><span>⏱️</span> Ca Trực & KPI</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar" style="background: #dbeafe; color: #1e40af;">NVH</div>
+      <div class="user-info">
+        <div class="user-name">Nguyễn Văn Hoàng</div>
+        <div class="user-role-label">Kỹ Thuật Viên Trưởng • Ca Sáng</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1><span>⏱️</span> Thông Tin Ca Trực & Chỉ Số Hiệu Suất (KPI)</h1>
+        <p>Báo cáo tổng kết ca làm việc và sổ tay bàn giao nghiệp vụ giữa các tổ vận hành</p>
+      </div>
+      <div class="page-actions">
+        <a href="staff-task-board.html" class="btn btn-primary">
+          <span>📋</span> Mở Bảng Việc Kanban
+        </a>
+      </div>
+    </div>
+
+    <!-- Shift Banner -->
+    <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #ffffff;">
+      <div class="card-body" style="padding: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span class="badge badge-completed" style="margin-bottom: 8px;">ĐANG TRONG CA LÀM VIỆC</span>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #ffffff;">Ca Sáng (07:00 – 15:30)</h2>
+          <p style="color: #94a3b8; font-size: var(--font-size-sm); margin-top: 4px;">
+            Hôm nay: 25/09/2026 • Nhân viên: <strong>Nguyễn Văn Hoàng (STF-01)</strong> • Bộ phận: Kỹ thuật & Điện lạnh
+          </p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: var(--font-size-xs); color: #cbd5e1;">Thời gian còn lại trong ca:</div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #2dd4bf;">04 giờ 20 phút</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal KPIs -->
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-info">
+          <h4>NHIỆM VỤ ĐÃ HOÀN THÀNH</h4>
+          <div class="stat-value" id="kpiCompleted">4</div>
+          <div class="stat-subtext">Trong tổng số nhiệm vụ được giao</div>
+        </div>
+        <div class="stat-icon">✅</div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-info">
+          <h4>THỜI GIAN XỬ LÝ TRUNG BÌNH</h4>
+          <div class="stat-value">13.5p</div>
+          <div class="stat-subtext">Mục tiêu cam kết SLA: &lt; 20p</div>
+        </div>
+        <div class="stat-icon">⚡</div>
+      </div>
+
+      <div class="stat-card gold">
+        <div class="stat-info">
+          <h4>ĐÁNH GIÁ KHÁCH HÀNG</h4>
+          <div class="stat-value">5.0 ★</div>
+          <div class="stat-subtext">100% đánh giá tuyệt đối</div>
+        </div>
+        <div class="stat-icon">⭐</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h4>TỶ LỆ TUÂN THỦ SLA</h4>
+          <div class="stat-value">100%</div>
+          <div class="stat-subtext">Không có nhiệm vụ trễ hạn</div>
+        </div>
+        <div class="stat-icon">🎯</div>
+      </div>
+    </div>
+
+    <!-- Handover & Teammates -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+      <!-- Teammates in shift -->
+      <div class="card">
+        <div class="card-header">
+          <h3><span>👥</span> Đồng Nghiệp Cùng Ca Trực Hôm Nay</h3>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; flex-direction: column; gap: 12px;" id="teammatesList">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-subtle); border-radius: var(--radius-sm);">
+              <div>
+                <strong>Lê Thị Lan</strong>
+                <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Buồng phòng • 0902 345 678</div>
+              </div>
+              <span class="badge badge-completed">Đang trực tầng 5 & 6</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-subtle); border-radius: var(--radius-sm);">
+              <div>
+                <strong>Phạm Quốc Tuấn</strong>
+                <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Ẩm thực & Bếp • 0903 456 789</div>
+              </div>
+              <span class="badge badge-completed">Đang trực bếp Room Service</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Handover form for next shift -->
+      <div class="card">
+        <div class="card-header">
+          <h3><span>📝</span> Sổ Bàn Giao Ca Tiếp Theo (Ca Chiều)</h3>
+        </div>
+        <div class="card-body">
+          <form onsubmit="saveHandover(event)">
+            <div class="form-group">
+              <label class="form-label">Ghi Chú Lưu Ý Bàn Giao Thiết Bị & Phòng Cần Theo Dõi:</label>
+              <textarea id="handoverNotes" class="form-textarea" rows="4" placeholder="Ví dụ: Đã xử lý xong điều hòa phòng 502, lưu ý theo dõi lại vào lúc 16h xem có còn đọng sương hay không. Đèn hành lang tầng 6 đã thay mới..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              <span>💾</span> Lưu Nhật Ký Giao Ca
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('staff');
+      loadShiftData();
+
+      window.addEventListener('stayflow_storage_updated', loadShiftData);
+    });
+
+    function loadShiftData() {
+      const allTasks = StayFlowDB.getTasks();
+      const myTasks = allTasks.filter(t => t.staffId === 'STF-01');
+      const completed = myTasks.filter(t => t.status === 'completed');
+
+      document.getElementById('kpiCompleted').textContent = completed.length || 2;
+    }
+
+    function saveHandover(e) {
+      e.preventDefault();
+      const text = document.getElementById('handoverNotes').value.trim();
+      if (!text) {
+        StayFlowUI.toast('Vui lòng nhập nội dung bàn giao!', 'warning');
+        return;
+      }
+      StayFlowUI.toast('Đã lưu nhật ký giao ca thành công cho Ca Chiều (Đỗ Minh Trí)!', 'success');
+      document.getElementById('handoverNotes').value = '';
+    }
+  </script>
+</body>
+</html>

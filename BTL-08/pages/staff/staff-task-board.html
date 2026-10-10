@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Nhiệm Vụ Nhân Viên (Task Board) | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">🧹</div>
+        <span>StayFlow</span>
+        <span class="brand-badge" style="background: rgba(59, 130, 246, 0.3); color: #bfdbfe;">STAFF OPS</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="staff-task-board.html" class="active"><span>📋</span> Bảng Việc Kanban</a></li>
+      <li><a href="staff-shift-view.html"><span>⏱️</span> Ca Trực & KPI</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar" style="background: #dbeafe; color: #1e40af;">NVH</div>
+      <div class="user-info">
+        <div class="user-name">Nguyễn Văn Hoàng</div>
+        <div class="user-role-label">Kỹ Thuật Viên Trưởng • Ca Sáng</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1><span>📋</span> Bảng Nhiệm Vụ Vận Hành (Staff Task Board)</h1>
+        <p>Giao diện tối ưu di động cho nhân viên buồng phòng & kỹ thuật tiếp nhận và hoàn tất công việc</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-outline" onclick="renderKanban()">
+          <span>🔄</span> Làm Mới Task
+        </button>
+        <a href="staff-shift-view.html" class="btn btn-secondary">
+          <span>📅</span> Xem Ca Trực Cá Nhân
+        </a>
+      </div>
+    </div>
+
+    <!-- Department Filter -->
+    <div style="display: flex; gap: 8px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
+      <span style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-muted);">Lọc theo bộ phận:</span>
+      <button class="filter-tab active" onclick="filterDept('ALL', this)">Tất Cả</button>
+      <button class="filter-tab" onclick="filterDept('Kỹ thuật', this)">Kỹ Thuật</button>
+      <button class="filter-tab" onclick="filterDept('Buồng phòng', this)">Buồng Phòng</button>
+      <button class="filter-tab" onclick="filterDept('Ẩm thực & Bếp', this)">F&B</button>
+    </div>
+
+    <!-- Kanban Board 3 Columns -->
+    <div class="kanban-board">
+
+      <!-- Column 1: Chờ Tiếp Nhận (Pending) -->
+      <div class="kanban-column">
+        <div class="kanban-header">
+          <div class="kanban-title">
+            <span>🔔</span> CHỜ TIẾP NHẬN
+          </div>
+          <span class="kanban-count" id="countPending">0</span>
+        </div>
+        <div class="kanban-cards" id="colPending">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Column 2: Đang Xử Lý (In Progress) -->
+      <div class="kanban-column" style="background: #eff6ff;">
+        <div class="kanban-header" style="border-bottom-color: #93c5fd;">
+          <div class="kanban-title" style="color: #1e40af;">
+            <span>🏃</span> ĐANG THỰC HIỆN
+          </div>
+          <span class="kanban-count" style="background: #bfdbfe; color: #1e40af;" id="countInProgress">0</span>
+        </div>
+        <div class="kanban-cards" id="colInProgress">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Column 3: Đã Hoàn Thành (Completed) -->
+      <div class="kanban-column" style="background: #ecfdf5;">
+        <div class="kanban-header" style="border-bottom-color: #a7f3d0;">
+          <div class="kanban-title" style="color: #065f46;">
+            <span>✅</span> ĐÃ HOÀN TẤT
+          </div>
+          <span class="kanban-count" style="background: #a7f3d0; color: #065f46;" id="countCompleted">0</span>
+        </div>
+        <div class="kanban-cards" id="colCompleted">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    let activeDept = 'ALL';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('staff');
+      renderKanban();
+
+      window.addEventListener('stayflow_storage_updated', () => {
+        renderKanban();
+      });
+    });
+
+    function filterDept(dept, btn) {
+      activeDept = dept;
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderKanban();
+    }
+
+    function renderKanban() {
+      const allTasks = StayFlowDB.getTasks();
+      const allReqs = StayFlowDB.getRequests();
+
+      let tasks = allTasks;
+
+      // Group tasks
+      const pending = tasks.filter(t => t.status === 'pending');
+      const inProgress = tasks.filter(t => t.status === 'in-progress');
+      const completed = tasks.filter(t => t.status === 'completed');
+
+      document.getElementById('countPending').textContent = pending.length;
+      document.getElementById('countInProgress').textContent = inProgress.length;
+      document.getElementById('countCompleted').textContent = completed.length;
+
+      document.getElementById('colPending').innerHTML = renderCardList(pending, 'pending');
+      document.getElementById('colInProgress').innerHTML = renderCardList(inProgress, 'in-progress');
+      document.getElementById('colCompleted').innerHTML = renderCardList(completed, 'completed');
+    }
+
+    function renderCardList(list, colType) {
+      if (list.length === 0) {
+        return `<div style="text-align: center; color: var(--text-muted); padding: 32px 10px; font-size: var(--font-size-xs);">Trống</div>`;
+      }
+
+      return list.map(t => {
+        const isCritical = t.priority === 'CRITICAL' || t.priority === 'HIGH';
+        return `
+          <div class="kanban-card" onclick="openTaskDetail('${t.id}')">
+            <div class="kanban-card-meta">
+              <span class="badge ${t.roomNumber === '502' ? 'badge-vip' : 'badge-pending'}">Phòng ${t.roomNumber}</span>
+              ${isCritical ? '<span class="badge badge-urgent">Ưu tiên cao</span>' : '<span class="badge" style="background:#f1f5f9;">Chuẩn</span>'}
+            </div>
+
+            <div class="kanban-card-title">${t.title}</div>
+
+            <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-bottom: 6px;">
+              👤 Phụ trách: <strong>${t.staffName}</strong>
+            </div>
+
+            ${t.notes ? `<div style="font-size: var(--font-size-xs); background: var(--bg-subtle); padding: 6px; border-radius: var(--radius-sm); margin-bottom: 6px; color: var(--text-main);">"${t.notes}"</div>` : ''}
+
+            <div class="kanban-card-footer">
+              <span>⏱️ SLA: ${t.slaMinutes || 20}p</span>
+              ${colType === 'pending' ? `
+                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); startTask('${t.id}')">
+                  Nhận Việc
+                </button>
+              ` : (colType === 'in-progress' ? `
+                <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); openTaskDetail('${t.id}')">
+                  Hoàn Tất →
+                </button>
+              ` : `
+                <span style="color: var(--status-completed); font-weight: 700;">✅ Xong</span>
+              `)}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function startTask(id) {
+      StayFlowDB.updateTaskStatus(id, 'in-progress', {
+        startedAt: new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5)
+      });
+      StayFlowUI.toast(`Đã nhận nhiệm vụ ${id}! Bắt đầu tính thời gian thực hiện.`, 'success');
+      renderKanban();
+    }
+
+    function openTaskDetail(id) {
+      window.location.href = `staff-task-detail.html?taskId=${id}`;
+    }
+  </script>
+</body>
+</html>

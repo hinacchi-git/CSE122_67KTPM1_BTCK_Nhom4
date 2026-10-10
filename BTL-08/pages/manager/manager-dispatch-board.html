@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Điều Phối Trung Tâm (AI Dispatch Board) | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+  <style>
+    .dispatch-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+    }
+    .dispatch-card-item {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .dispatch-card-item:hover, .dispatch-card-item.selected {
+      border-color: var(--primary-teal);
+      box-shadow: var(--shadow-md);
+      background: #fcfefe;
+    }
+    .dispatch-card-item.selected {
+      border-left: 5px solid var(--primary-teal);
+    }
+    .dispatch-card-item.critical {
+      border-left: 5px solid var(--status-urgent);
+    }
+    @media (max-width: 1024px) {
+      .dispatch-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">👔</div>
+        <span>StayFlow</span>
+        <span class="brand-badge" style="background: rgba(217, 119, 6, 0.3); color: #fef08a;">HOTEL MANAGER</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="manager-dispatch-board.html" class="active"><span>⚡</span> Bảng Điều Phối Live</a></li>
+      <li><a href="manager-sla-monitor.html"><span>⏱️</span> Giám Sát SLA</a></li>
+      <li><a href="manager-service-report.html"><span>📊</span> Báo Cáo & AI Insights</a></li>
+      <li><a href="manager-staff-performance.html"><span>👥</span> Hiệu Suất Nhân Sự</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar" style="background: #fef3c7; color: #b45309;">VQB</div>
+      <div class="user-info">
+        <div class="user-name">Vũ Quốc Bảo</div>
+        <div class="user-role-label">Quản Lý Ca Trực (Duty Manager)</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1><span>⚡</span> Bảng Điều Phối Trung Tâm (Live Dispatch Matrix)</h1>
+        <p>Theo dõi yêu cầu của khách lưu trú theo thời gian thực và phân công nhân viên bằng <strong>AI-2 Priority Assistant</strong></p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-outline" onclick="loadDispatchData()">
+          <span>🔄</span> Làm Mới Dữ Liệu
+        </button>
+        <a href="manager-sla-monitor.html" class="btn btn-primary">
+          <span>⏱️</span> Mở Đồng Hồ SLA
+        </a>
+      </div>
+    </div>
+
+    <!-- Live Stats -->
+    <div class="stats-grid">
+      <div class="stat-card gold">
+        <div class="stat-info">
+          <h4>YÊU CẦU CHỜ ĐIỀU PHỐI</h4>
+          <div class="stat-value" id="pendingDispatchCount">0</div>
+          <div class="stat-subtext">Cần phân công ngay lập tức</div>
+        </div>
+        <div class="stat-icon">🔔</div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-info">
+          <h4>ĐANG THỰC HIỆN TRONG CA</h4>
+          <div class="stat-value" id="inProgressCount">0</div>
+          <div class="stat-subtext">Nhân viên đang tại phòng</div>
+        </div>
+        <div class="stat-icon">🏃</div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-info">
+          <h4>HOÀN THÀNH ĐÚNG HẠN</h4>
+          <div class="stat-value">98.5%</div>
+          <div class="stat-subtext">Tuân thủ chuẩn SLA 5 sao</div>
+        </div>
+        <div class="stat-icon">🎯</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h4>NHÂN SỰ TRỰC CA HIỆN TẠI</h4>
+          <div class="stat-value" id="activeStaffCount">4</div>
+          <div class="stat-subtext">Sẵn sàng nhận nhiệm vụ</div>
+        </div>
+        <div class="stat-icon">👥</div>
+      </div>
+    </div>
+
+    <!-- Dispatch Layout: Left list, Right AI Assistant & Assignment Panel -->
+    <div class="dispatch-layout">
+
+      <!-- Left Column: Pending & Active Requests List -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <h3><span>📋</span> Danh Sách Yêu Cầu Cần Điều Phối</h3>
+            <span class="badge badge-pending" id="badgePendingLive">Live Sync Active</span>
+          </div>
+          <div class="card-body" id="dispatchListContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: AI-2 Priority & Assignment Card -->
+      <div>
+        <div class="card" style="position: sticky; top: 90px;">
+          <div class="card-header" style="background: linear-gradient(135deg, #f0fdfa, #ffffff);">
+            <h3><span>✨</span> AI-2 Priority & Dispatch Assistant</h3>
+          </div>
+          <div class="card-body" id="aiDispatchPanel">
+            <div class="empty-state" style="padding: 24px;">
+              <div class="empty-state-icon">👈</div>
+              <h4>Chọn một yêu cầu bên trái</h4>
+              <p>AI sẽ tự động tính toán điểm khẩn cấp, phân tích rủi ro và gợi ý nhân viên tiếp nhận phù hợp nhất.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ai.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    let selectedReq = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('manager');
+      loadDispatchData();
+
+      // Đồng bộ thời gian thực khi có thay đổi trong localStorage
+      window.addEventListener('stayflow_storage_updated', () => {
+        loadDispatchData();
+      });
+    });
+
+    function loadDispatchData() {
+      const allReqs = StayFlowDB.getRequests();
+      const pendingReqs = allReqs.filter(r => r.status === 'pending');
+      const inProgressReqs = allReqs.filter(r => r.status === 'in-progress');
+
+      document.getElementById('pendingDispatchCount').textContent = pendingReqs.length;
+      document.getElementById('inProgressCount').textContent = inProgressReqs.length;
+      document.getElementById('activeStaffCount').textContent = StayFlowDB.getStaff().length;
+
+      const container = document.getElementById('dispatchListContainer');
+
+      if (allReqs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🎉</div>
+            <h4>Hiện không có yêu cầu nào cần điều phối</h4>
+            <p>Hệ thống đang hoạt động tối ưu. Hãy chuyển sang vai trò Khách hàng để tạo yêu cầu mới.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      allReqs.forEach((req, idx) => {
+        const isSelected = selectedReq && selectedReq.id === req.id;
+        const isCritical = req.priority === 'CRITICAL' || (req.description || '').toLowerCase().includes('chảy nước');
+
+        let statusBadge = `<span class="badge badge-pending">Chờ điều phối</span>`;
+        if (req.status === 'in-progress') statusBadge = `<span class="badge badge-in-progress">Đang xử lý</span>`;
+        if (req.status === 'completed') statusBadge = `<span class="badge badge-completed">Hoàn thành</span>`;
+        if (req.status === 'cancelled') statusBadge = `<span class="badge badge-cancelled">Đã hủy</span>`;
+
+        html += `
+          <div class="dispatch-card-item ${isSelected ? 'selected' : ''} ${isCritical ? 'critical' : ''}" 
+               onclick="selectRequest('${req.id}')">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <span class="badge ${req.roomNumber === '502' ? 'badge-vip' : ''}">Phòng ${req.roomNumber}</span>
+                <strong style="margin-left: 6px; color: var(--primary-navy);">${req.guestName || 'Khách lưu trú'}</strong>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${statusBadge}
+                ${isCritical ? '<span class="badge badge-urgent">🔥 KHẨN CẤP</span>' : ''}
+              </div>
+            </div>
+
+            <h4 style="font-size: var(--font-size-base); color: var(--primary-navy); font-weight: 700; margin-bottom: 4px;">
+              ${req.serviceName || req.category}
+            </h4>
+
+            <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: 8px;">
+              "${req.description}"
+            </p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: var(--font-size-xs); color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 8px;">
+              <span>🕒 Tạo lúc: ${req.createdAt}</span>
+              <span>🏢 ${req.department} • SLA: ${req.slaMinutes}p</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Tự động chọn item đầu tiên nếu chưa chọn
+      if (!selectedReq && allReqs.length > 0) {
+        selectRequest(allReqs[0].id);
+      } else if (selectedReq) {
+        // Cập nhật lại chi tiết
+        selectRequest(selectedReq.id);
+      }
+    }
+
+    function selectRequest(id) {
+      selectedReq = StayFlowDB.getRequestById(id);
+      if (!selectedReq) return;
+
+      // Update UI selection highlight
+      document.querySelectorAll('.dispatch-card-item').forEach(el => el.classList.remove('selected'));
+
+      const panel = document.getElementById('aiDispatchPanel');
+      panel.innerHTML = `
+        <div style="text-align: center; padding: 24px;">
+          <span class="ai-spinner" style="width: 24px; height: 24px;"></span>
+          <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-top: 10px;">
+            AI-2 đang đánh giá điểm khẩn cấp & tra cứu nhân sự khả dụng...
+          </p>
+        </div>
+      `;
+
+      // Trigger AI-2 Priority & Dispatch Assistant
+      StayFlowAI.evaluatePriority(selectedReq, (aiResult) => {
+        const staffList = StayFlowDB.getStaff();
+        const deptStaff = staffList.filter(s => s.department === selectedReq.department);
+        const optionsList = (deptStaff.length ? deptStaff : staffList);
+
+        let reasonsHtml = aiResult.reasons.map(r => `<li>${r}</li>`).join('');
+
+        let badgePriority = 'badge-pending';
+        if (aiResult.suggestedPriority === 'CRITICAL' || aiResult.suggestedPriority === 'HIGH') {
+          badgePriority = 'badge-urgent';
+        }
+
+        panel.innerHTML = `
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span class="badge badge-vip">Phòng ${selectedReq.roomNumber}</span>
+              <span class="badge ${badgePriority}">Độ ưu tiên: ${aiResult.suggestedPriority}</span>
+            </div>
+            <h4 style="font-size: 1.1rem; color: var(--primary-navy); font-weight: 700;">${selectedReq.serviceName}</h4>
+            <p style="font-size: var(--font-size-sm); color: var(--text-main); margin-top: 4px; background: var(--bg-subtle); padding: 10px; border-radius: var(--radius-sm);">
+              "${selectedReq.description}"
+            </p>
+          </div>
+
+          <!-- AI Evaluation Card -->
+          <div class="ai-assistant-card" style="margin: 0 0 18px;">
+            <div class="ai-card-header">
+              <span class="ai-badge">✨ Phân Tích Của AI-2</span>
+              <span style="font-size: var(--font-size-xs); font-weight: 700; color: var(--primary-teal);">
+                Điểm rủi ro: ${aiResult.urgencyScore}/100
+              </span>
+            </div>
+            <div class="ai-rationale" style="margin-top: 0;">
+              <strong>Căn cứ đánh giá:</strong>
+              <ul style="padding-left: 18px; margin-top: 4px;">${reasonsHtml}</ul>
+            </div>
+            <div style="font-size: var(--font-size-xs); color: #065f46; background: #ecfdf5; padding: 8px; border-radius: var(--radius-sm); margin-top: 8px;">
+              💡 <strong>Đề xuất phân công:</strong> ${aiResult.suggestedStaffName} (Có số lượng task thấp nhất trong ca)
+            </div>
+          </div>
+
+          <!-- Action / Assignment Form -->
+          ${selectedReq.status === 'completed' ? `
+            <div class="badge badge-completed" style="display: block; text-align: center; padding: 10px; font-size: var(--font-size-sm);">
+              ✅ Yêu cầu này đã hoàn tất vào lúc ${selectedReq.completedAt || ''}
+            </div>
+          ` : `
+            <form onsubmit="confirmDispatch(event)">
+              <div class="form-group">
+                <label class="form-label">Chọn Nhân Viên Tiếp Nhận</label>
+                <select id="assignStaffSelect" class="form-select" required>
+                  ${optionsList.map(s => `
+                    <option value="${s.id}" data-name="${s.name}" ${s.id === aiResult.suggestedStaffId ? 'selected' : ''}>
+                      ${s.name} (${s.department} • Đang xử lý: ${s.activeTasks} task)
+                    </option>
+                  `).join('')}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Ghi Chú Điều Phối (Gửi đến điện thoại nhân viên)</label>
+                <textarea id="dispatchNotes" class="form-textarea" rows="2" placeholder="Ghi chú thêm cho nhân viên khi nhận việc...">${aiResult.fullRationale}</textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                <span>⚡</span> Xác Nhận Gán Task Cho Nhân Viên
+              </button>
+            </form>
+          `}
+        `;
+      });
+    }
+
+    function confirmDispatch(e) {
+      e.preventDefault();
+      if (!selectedReq) return;
+
+      const select = document.getElementById('assignStaffSelect');
+      const staffId = select ? select.value : 'STF-01';
+      const staffName = (select && select.selectedIndex >= 0) ? select.options[select.selectedIndex].getAttribute('data-name') : 'Nguyễn Văn Hoàng';
+      const notes = document.getElementById('dispatchNotes') ? document.getElementById('dispatchNotes').value : '';
+
+      // 1. Tạo Task cho Staff
+      const newTask = StayFlowDB.addTask({
+        requestId: selectedReq.id,
+        staffId: staffId,
+        staffName: staffName,
+        title: `${selectedReq.serviceName} - Phòng ${selectedReq.roomNumber}`,
+        roomNumber: selectedReq.roomNumber,
+        priority: selectedReq.priority || 'HIGH',
+        slaMinutes: selectedReq.slaMinutes || 20,
+        notes: notes
+      });
+
+      StayFlowUI.toast(`Đã gán task ${newTask.id} thành công cho nhân viên: ${staffName}!`, 'success');
+      loadDispatchData();
+    }
+  </script>
+</body>
+</html>

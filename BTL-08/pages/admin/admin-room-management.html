@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Buồng Phòng Lưu Trú | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">⚙️</div>
+        <span>StayFlow</span>
+        <span class="brand-badge" style="background: rgba(255, 255, 255, 0.2); color: #ffffff;">SYSTEM ADMIN</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="admin-dashboard.html"><span>📊</span> Dashboard Quản Trị</a></li>
+      <li><a href="admin-service-type-management.html"><span>🛎️</span> Danh Mục Dịch Vụ & SLA</a></li>
+      <li><a href="admin-user-management.html"><span>👤</span> Quản Lý Tài Khoản</a></li>
+      <li><a href="admin-room-management.html" class="active"><span>🏨</span> Quản Lý Buồng Phòng</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar" style="background: #334155; color: #ffffff;">AD</div>
+      <div class="user-info">
+        <div class="user-name">Ban Quản Trị</div>
+        <div class="user-role-label">System Administrator</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1><span>🏨</span> Quản Lý Danh Sách Buồng Phòng Khách Sạn</h1>
+        <p>Cập nhật trạng thái buồng phòng (Đang ở, Trống sạch, Bảo trì) và phân bổ hạng khách VIP</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openAddRoomModal()">
+          <span>➕</span> Thêm Phòng Nghỉ Mới
+        </button>
+      </div>
+    </div>
+
+    <!-- Rooms Table Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3><span>📋</span> Danh Sách Phòng Theo Tầng</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Số Phòng</th>
+                <th>Tầng</th>
+                <th>Hạng Phòng</th>
+                <th>Khách Lưu Trú Hiện Tại</th>
+                <th>Hạng Thành Viên</th>
+                <th>Trạng Thái Buồng Phòng</th>
+                <th>Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="roomsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Add Room -->
+    <div id="roomModal" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>Thêm Phòng Nghỉ Mới</h3>
+          <button class="modal-close-btn" data-close-modal>&times;</button>
+        </div>
+        <form onsubmit="handleSaveRoom(event)">
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Số Phòng <span class="required">*</span></label>
+                <input type="text" id="rmNumber" class="form-control" placeholder="VD: 504" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tầng <span class="required">*</span></label>
+                <input type="number" id="rmFloor" class="form-control" value="5" min="1" max="25" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hạng Phòng (Room Type) <span class="required">*</span></label>
+              <input type="text" id="rmType" class="form-control" placeholder="VD: Executive Ocean Suite" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Trạng Thái Buồng</label>
+                <select id="rmStatus" class="form-select">
+                  <option value="Vacant Clean">Trống Sạch (Vacant Clean)</option>
+                  <option value="Occupied">Đang Có Khách (Occupied)</option>
+                  <option value="Maintenance">Đang Bảo Trì (Maintenance)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phân Hạng VIP</label>
+                <select id="rmVip" class="form-select">
+                  <option value="false">Tiêu Chuẩn (Standard)</option>
+                  <option value="true">VIP Member</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" data-close-modal>Hủy</button>
+            <button type="submit" class="btn btn-primary"><span>💾</span> Lưu Phòng</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('admin');
+      renderRoomsTable();
+
+      window.addEventListener('stayflow_storage_updated', renderRoomsTable);
+    });
+
+    function renderRoomsTable() {
+      const rooms = StayFlowDB.getRooms();
+      const tbody = document.getElementById('roomsTableBody');
+
+      tbody.innerHTML = rooms.map(r => {
+        let badgeStatus = '<span class="badge badge-completed">Trống Sạch</span>';
+        if (r.status === 'Occupied') badgeStatus = '<span class="badge badge-in-progress">Đang Có Khách</span>';
+        if (r.status === 'Maintenance') badgeStatus = '<span class="badge badge-urgent">Đang Bảo Trì</span>';
+
+        return `
+          <tr>
+            <td><strong style="font-size: 1.1rem; color: var(--primary-navy);">Phòng ${r.number}</strong></td>
+            <td>Tầng ${r.floor}</td>
+            <td><strong>${r.type}</strong></td>
+            <td>${r.guestName ? `<strong>${r.guestName}</strong>` : '<span style="color:var(--text-muted);">(Chưa có khách)</span>'}</td>
+            <td>${r.vip ? '<span class="badge badge-vip">VIP Member</span>' : '<span class="badge" style="background:#f1f5f9;">Standard</span>'}</td>
+            <td>${badgeStatus}</td>
+            <td>
+              <button class="btn btn-sm btn-outline" onclick="toggleRoomStatus('${r.id}')">
+                Đổi Trạng Thái
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAddRoomModal() {
+      document.getElementById('rmNumber').value = '';
+      document.getElementById('rmType').value = '';
+      StayFlowUI.openModal('roomModal');
+    }
+
+    function handleSaveRoom(e) {
+      e.preventDefault();
+      const room = {
+        number: document.getElementById('rmNumber').value.trim(),
+        floor: parseInt(document.getElementById('rmFloor').value) || 5,
+        type: document.getElementById('rmType').value.trim(),
+        status: document.getElementById('rmStatus').value,
+        vip: document.getElementById('rmVip').value === 'true',
+        guestName: null
+      };
+
+      StayFlowDB.addRoom(room);
+      StayFlowUI.toast(`Đã thêm phòng ${room.number} thành công!`, 'success');
+      StayFlowUI.closeModal('roomModal');
+      renderRoomsTable();
+    }
+
+    function toggleRoomStatus(id) {
+      const rooms = StayFlowDB.getRooms();
+      const r = rooms.find(x => x.id === id);
+      if (!r) return;
+
+      const nextStatus = r.status === 'Occupied' ? 'Vacant Clean' : (r.status === 'Vacant Clean' ? 'Maintenance' : 'Occupied');
+      StayFlowDB.updateRoom(id, { status: nextStatus });
+      StayFlowUI.toast(`Đã cập nhật phòng ${r.number} sang trạng thái: ${nextStatus}`, 'info');
+      renderRoomsTable();
+    }
+  </script>
+</body>
+</html>

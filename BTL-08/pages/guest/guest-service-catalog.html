@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh Mục Dịch Vụ Khách Sạn | StayFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+  <style>
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .catalog-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+    }
+    .catalog-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-teal);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="brand-row">
+      <a href="../../index.html" class="brand-logo">
+        <div class="logo-icon">🛎️</div>
+        <span>StayFlow</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="guest-dashboard.html"><span>🏠</span> Tổng Quan Phòng</a></li>
+      <li><a href="guest-service-request.html"><span>➕</span> Gửi Yêu Cầu</a></li>
+      <li><a href="guest-my-requests.html"><span>📋</span> Tiến Độ Của Tôi</a></li>
+      <li><a href="guest-service-catalog.html" class="active"><span>📖</span> Danh Mục Dịch Vụ</a></li>
+      <li><a href="guest-feedback.html"><span>⭐</span> Đánh Giá Dịch Vụ</a></li>
+    </ul>
+    <div class="user-profile-widget">
+      <div class="user-avatar">502</div>
+      <div class="user-info">
+        <div class="user-name">Nguyễn Văn An</div>
+        <div class="user-role-label">VIP Diamond • Phòng 502</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1><span>📖</span> Danh Mục Dịch Vụ & Tiện Ích Khách Sạn</h1>
+        <p>Tra cứu bảng giá, thời gian phục vụ tiêu chuẩn (SLA) và gửi yêu cầu trực tiếp</p>
+      </div>
+      <div class="page-actions">
+        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm dịch vụ..." oninput="filterCatalog()" style="width: 240px;">
+      </div>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div style="display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px;">
+      <button class="filter-tab active" onclick="setCategoryFilter('ALL', this)">Tất Cả</button>
+      <button class="filter-tab" onclick="setCategoryFilter('Housekeeping', this)">Buồng Phòng & Tiện Ích</button>
+      <button class="filter-tab" onclick="setCategoryFilter('Maintenance', this)">Kỹ Thuật & Sửa Chữa</button>
+      <button class="filter-tab" onclick="setCategoryFilter('F&B', this)">Ẩm Thực Tại Phòng</button>
+      <button class="filter-tab" onclick="setCategoryFilter('Laundry', this)">Giặt Là</button>
+      <button class="filter-tab" onclick="setCategoryFilter('Concierge', this)">Tiền Sảnh</button>
+    </div>
+
+    <!-- Catalog Grid -->
+    <div class="catalog-grid" id="catalogGrid">
+      <!-- Injected by JS -->
+    </div>
+
+  </main>
+
+  <script src="../../js/stayflow-db.js"></script>
+  <script src="../../js/stayflow-ui.js"></script>
+  <script>
+    let activeCategory = 'ALL';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      StayFlowUI.initDemoBar('guest');
+      renderCatalog();
+
+      window.addEventListener('stayflow_storage_updated', renderCatalog);
+    });
+
+    function setCategoryFilter(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCatalog();
+    }
+
+    function filterCatalog() {
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const services = StayFlowDB.getServices();
+      const keyword = (document.getElementById('searchInput').value || '').toLowerCase();
+
+      let filtered = services;
+      if (activeCategory !== 'ALL') {
+        filtered = filtered.filter(s => s.category === activeCategory);
+      }
+      if (keyword) {
+        filtered = filtered.filter(s => s.name.toLowerCase().includes(keyword) || s.desc.toLowerCase().includes(keyword) || s.department.toLowerCase().includes(keyword));
+      }
+
+      const container = document.getElementById('catalogGrid');
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">🔍</div>
+            <h4>Không tìm thấy dịch vụ nào</h4>
+            <p>Vui lòng thử tìm kiếm bằng từ khóa khác hoặc xóa bộ lọc.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(s => {
+        let priceTag = s.price > 0 ? `<span style="font-weight: 700; color: var(--accent-gold);">${s.price.toLocaleString('vi-VN')} đ</span>` : `<span class="badge badge-completed">Miễn Phí</span>`;
+        return `
+          <div class="catalog-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <span class="badge" style="background: var(--bg-subtle); color: var(--primary-navy);">${s.department}</span>
+                <span class="badge badge-pending">⏱️ SLA: ${s.slaMinutes} phút</span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--primary-navy); margin-bottom: 6px;">${s.name}</h3>
+              <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;">${s.desc}</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 12px;">
+              <div>${priceTag}</div>
+              <a href="guest-service-request.html?serviceId=${s.id}" class="btn btn-sm btn-primary">
+                Yêu Cầu Ngay →
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
