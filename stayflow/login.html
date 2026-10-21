@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập – StayFlow</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="login">
+  <main class="auth-wrap">
+    <div class="card auth-card">
+      <h1>Đăng nhập</h1>
+      <p class="auth-sub">Chào mừng bạn quay lại StayFlow!</p>
+
+      <div class="auth-error" id="loginErr" hidden></div>
+
+      <form id="loginForm" novalidate>
+        <label class="field">
+          <span class="field-label">Tên đăng nhập <span class="req">*</span></span>
+          <input type="text" id="username" name="username" placeholder="ví dụ: khach" autocomplete="username">
+          <small class="field-err" id="errUser"></small>
+        </label>
+        <label class="field">
+          <span class="field-label">Mật khẩu <span class="req">*</span></span>
+          <input type="password" id="password" name="password" placeholder="••••••" autocomplete="current-password">
+          <small class="field-err" id="errPass"></small>
+        </label>
+        <button class="btn btn-primary" type="submit" style="width:100%">Đăng nhập</button>
+      </form>
+
+      <p style="margin-top:14px; font-size:.9rem; text-align:center">
+        Chưa có tài khoản? <a href="register.html">Đăng ký</a> · <a href="index.html">Về trang chủ</a>
+      </p>
+
+      <div class="demo-accounts">
+        <h3>🔑 Tài khoản demo (bấm để điền nhanh)</h3>
+        <div class="demo-grid">
+          <button class="demo-btn" data-u="khach" data-p="123456"><b>khach</b><small>Khách lưu trú · phòng 502 (VIP)</small></button>
+          <button class="demo-btn" data-u="nhanvien" data-p="123456"><b>nhanvien</b><small>Nhân viên · Buồng phòng</small></button>
+          <button class="demo-btn" data-u="quanly" data-p="123456"><b>quanly</b><small>Quản lý khách sạn</small></button>
+          <button class="demo-btn" data-u="admin" data-p="123456"><b>admin</b><small>Quản trị viên hệ thống</small></button>
+        </div>
+        <p style="font-size:.8rem; color:var(--muted); margin-top:8px">Mật khẩu chung của tài khoản demo: 123456</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    if (Auth.current()) location.replace('guest-dashboard.html');
+    UI.init('login');
+
+    const form = document.getElementById('loginForm');
+    const errBox = document.getElementById('loginErr');
+
+    document.querySelectorAll('.demo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('username').value = btn.dataset.u;
+        document.getElementById('password').value = btn.dataset.p;
+        document.getElementById('errUser').textContent = '';
+        document.getElementById('errPass').textContent = '';
+        errBox.hidden = true;
+      });
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      let valid = true;
+
+      document.getElementById('errUser').textContent = username ? '' : 'Vui lòng nhập tên đăng nhập';
+      document.getElementById('errPass').textContent = password ? '' : 'Vui lòng nhập mật khẩu';
+      if (!username || !password) valid = false;
+      if (!valid) return;
+
+      const result = Auth.login(username, password);
+      if (result.ok) {
+        UI.toast('Đăng nhập thành công. Chào mừng ' + result.user.fullName + '!');
+        location.href = 'guest-dashboard.html';
+      } else {
+        errBox.textContent = result.message;
+        errBox.hidden = false;
+        UI.toast(result.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
