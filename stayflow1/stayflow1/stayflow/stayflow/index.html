@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StayFlow – Điều phối dịch vụ trong thời gian lưu trú</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="index">
+  <main>
+    <section class="hero">
+      <h1>StayFlow</h1>
+      <p>Gửi yêu cầu dịch vụ – theo dõi tiến độ theo thời gian thực – được trợ lý AI hỗ trợ trong suốt thời gian lưu trú.</p>
+      <div class="hero-actions">
+        <a class="btn btn-accent" href="login.html">Đăng nhập</a>
+        <a class="btn btn-outline" href="register.html">Đăng ký tài khoản</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Một hệ thống – ba khu vực làm việc</h2>
+      <p class="section-lead">Ai đăng nhập cũng vào trang web dành cho khách. Khu Nhân viên và Quản trị viên chỉ được kích hoạt với tài khoản được cấp role tương ứng.</p>
+      <div class="feature-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">🛎️</div>
+          <h3>Khách lưu trú</h3>
+          <p>Tạo yêu cầu dịch vụ, theo dõi tiến độ từng bước, nhận gợi ý hoạt động từ trợ lý AI.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🧹</div>
+          <h3>Nhân viên & Quản lý</h3>
+          <p>Nhân viên nhận nhiệm vụ theo vị trí (Buồng phòng, Ăn uống, Bảo trì, Lễ tân). Quản lý điều phối, theo dõi SLA và phân quyền nhân sự.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Quản trị viên</h3>
+          <p>Chỉ quản lý tài khoản, cấp vai trò và cập nhật hệ thống. Không truy cập bất kỳ dữ liệu vận hành nào của khách sạn.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Tính năng nổi bật</h2>
+      <p class="section-lead">Đúng theo đề bài BTL-08: nhiều vai trò, CRUD có ý nghĩa, trạng thái đầy đủ và trải nghiệm AI có giải thích.</p>
+      <div class="feature-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Theo dõi SLA thời gian thực</h3>
+          <p>Mỗi loại dịch vụ có thời gian cam kết riêng; quản lý nhìn thấy ngay yêu cầu nào sắp trễ hoặc đã trễ.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI phân loại yêu cầu</h3>
+          <p>Khách chỉ cần mô tả bằng lời văn, AI gợi ý đúng bộ phận kèm lý do và độ tin cậy.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>AI gợi ý mức ưu tiên</h3>
+          <p>Dựa trên từ ngữ cấp bách, hạng phòng VIP và thời gian SLA còn lại – kèm giải thích rõ ràng.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>AI tóm tắt phản hồi</h3>
+          <p>Đúc kết hàng chục phản hồi thành các chủ đề nổi bật để quản lý ra quyết định nhanh.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>Trợ lý AI theo vai trò</h3>
+          <p>Một trợ lý chung trên mọi trang: gợi ý hoạt động cho khách, nhắc nhiệm vụ cho nhân viên, cảnh báo SLA cho quản lý.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Responsive</h3>
+          <p>Giao diện hiển thị tốt trên desktop, tablet và mobile.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    BTL-08 · StayFlow – Điều phối dịch vụ trong thời gian lưu trú · Môn học CSE122 – Phát triển ứng dụng web cơ bản
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    const curUser = Auth.current();
+    if (curUser) location.replace(Auth.homeFor(curUser));
+    UI.init('index');
+  </script>
+</body>
+</html>

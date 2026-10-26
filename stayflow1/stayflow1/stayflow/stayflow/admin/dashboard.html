@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng điều khiển – StayFlow</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body data-page="admin-dashboard">
+  <main class="page">
+    <div class="page-head">
+      <h1>Bảng điều khiển Quản trị viên</h1>
+      <p class="page-sub">Tổng quan tài khoản, nhật ký phân quyền và trạng thái hệ thống.</p>
+    </div>
+
+    <div class="note-card" style="margin-bottom:18px">
+      🛡️ <b>Phạm vi quyền của Quản trị viên:</b> chỉ quản lý <b>tài khoản &amp; phân vai trò</b> và <b>cập nhật hệ thống</b>. Theo thiết kế, Admin <b>không truy cập</b> dữ liệu vận hành của khách sạn (yêu cầu dịch vụ, nhiệm vụ, lưu trú, phản hồi khách).
+    </div>
+
+    <div class="grid-4" id="stats" style="margin-bottom:18px"></div>
+
+    <div class="grid-2" style="align-items:start">
+      <div class="card" id="recent">
+        <div class="card-title">🔑 Hoạt động phân quyền &amp; tài khoản gần đây</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🛠️ Trình quản trị hệ thống</div>
+        <p class="card-sub" style="margin-bottom:12px">Các thao tác hệ thống dành riêng cho Quản trị viên:</p>
+        <div class="req-actions" style="flex-direction:column; align-items:flex-start; gap:9px">
+          <a class="btn btn-primary" href="user-management.html">👤 Quản lý tài khoản &amp; cấp vai trò</a>
+          <a class="btn btn-outline" href="system-updates.html">📢 Đăng bản tin / cập nhật hệ thống</a>
+          <button class="btn btn-ghost" id="resetBtn">♻️ Đặt lại dữ liệu demo</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/data.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/ai.js"></script>
+  <script src="common.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

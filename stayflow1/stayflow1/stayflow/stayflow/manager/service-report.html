@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Báo cáo dịch vụ – StayFlow</title>
+        <link rel="stylesheet" href="manager.css">
+    </head>
+    <body data-page="manager-service-report">
+        <main class="page">
+            <div class="page-head">
+                <h1>Báo cáo dịch vụ</h1>
+                <p class="page-sub">Tổng quan chất lượng phục vụ và đúc kết phản hồi khách bằng AI.</p>
+            </div>
+
+            <div class="grid-4 stats-row" id="stats"></div>
+
+            <div class="grid-2 report-grid">
+                <div class="card">
+                    <div class="card-title">📊 Yêu cầu theo loại dịch vụ</div>
+                    <div id="chart"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">💬 Tóm tắt phản hồi bằng AI (AI-3)</div>
+                    <p class="card-sub card-sub-spaced">AI đọc toàn bộ phản hồi, thống kê chủ đề nổi bật kèm ví dụ và lý do.</p>
+                    <button class="btn btn-accent btn-sm" id="aiSummaryBtn" type="button">✨ Tóm tắt phản hồi</button>
+                    <div id="aiPanel"></div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Nhận xét AI đã lưu</h2>
+
+            <section id="savedSummaries"></section>
+
+            <h2 class="section-title">Phản hồi gần đây của khách</h2>
+
+            <section id="fbList"></section>
+        </main>
+
+        <script src="../js/data.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/ui.js"></script>
+        <script src="../js/ai.js"></script>
+        <script src="common.js"></script>
+        <script src="service-report.js"></script>
+    </body>
+</html>

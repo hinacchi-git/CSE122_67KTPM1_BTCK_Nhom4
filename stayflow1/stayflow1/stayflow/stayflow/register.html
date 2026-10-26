@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký – StayFlow</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="register">
+  <main class="auth-wrap">
+    <div class="card auth-card">
+      <h1>Đăng ký tài khoản</h1>
+      <p class="auth-sub">Tài khoản mới mặc định là <b>Khách lưu trú</b>. Vai trò Nhân viên / Quản lý do Quản trị viên cấp sau này.</p>
+
+      <form id="regForm" novalidate>
+        <label class="field">
+          <span class="field-label">Họ và tên <span class="req">*</span></span>
+          <input type="text" id="fullName" placeholder="Nguyễn Văn A">
+          <small class="field-err" id="errName"></small>
+        </label>
+        <label class="field">
+          <span class="field-label">Tên đăng nhập <span class="req">*</span></span>
+          <input type="text" id="username" placeholder="ví dụ: nguyenvana" autocomplete="username">
+          <small class="field-err" id="errUser"></small>
+        </label>
+        <label class="field">
+          <span class="field-label">Mật khẩu (tối thiểu 6 ký tự) <span class="req">*</span></span>
+          <input type="password" id="password" autocomplete="new-password">
+          <small class="field-err" id="errPass"></small>
+        </label>
+        <label class="field">
+          <span class="field-label">Nhập lại mật khẩu <span class="req">*</span></span>
+          <input type="password" id="confirm" autocomplete="new-password">
+          <small class="field-err" id="errConfirm"></small>
+        </label>
+        <button class="btn btn-primary" type="submit" style="width:100%">Tạo tài khoản</button>
+      </form>
+
+      <p style="margin-top:14px; font-size:.9rem; text-align:center">
+        Đã có tài khoản? <a href="login.html">Đăng nhập</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    const curUser = Auth.current();
+    if (curUser) location.replace(Auth.homeFor(curUser));
+    UI.init('register');
+
+    document.getElementById('regForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const fullName = document.getElementById('fullName').value.trim();
+      const username = document.getElementById('username').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm').value;
+      let valid = true;
+
+      const setErr = (id, msg) => { document.getElementById(id).textContent = msg; if (msg) valid = false; };
+
+      setErr('errName', fullName.length >= 2 ? '' : 'Vui lòng nhập họ tên (tối thiểu 2 ký tự)');
+      const users = Store.get('users');
+      if (!username) setErr('errUser', 'Vui lòng nhập tên đăng nhập');
+      else if (users.some(u => u.username === username)) setErr('errUser', 'Tên đăng nhập đã tồn tại');
+      else if (/\s/.test(username)) setErr('errUser', 'Tên đăng nhập không chứa khoảng trắng');
+      else setErr('errUser', '');
+
+      setErr('errPass', password.length >= 6 ? '' : 'Mật khẩu cần tối thiểu 6 ký tự');
+      setErr('errConfirm', confirm === password && confirm ? '' : 'Mật khẩu nhập lại chưa khớp');
+
+      if (!valid) return;
+
+      const user = {
+        id: newId('u'),
+        username, password, fullName,
+        role: 'guest', position: null, status: 'active',
+        createdAt: Date.now()
+      };
+      users.push(user);
+      Store.set('users', users);
+      Auth.startSession(user);
+      UI.toast('Tạo tài khoản thành công. Chào mừng ' + fullName + '!');
+      location.href = Auth.homeFor(user);
+    });
+  </script>
+</body>
+</html>

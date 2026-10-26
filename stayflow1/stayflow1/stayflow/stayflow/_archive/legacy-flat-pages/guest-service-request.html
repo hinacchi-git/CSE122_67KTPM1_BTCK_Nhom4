@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tạo yêu cầu dịch vụ – StayFlow</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="guest-service-request">
+  <main class="page">
+    <div class="page-head">
+      <h1>Tạo yêu cầu dịch vụ</h1>
+      <p class="page-sub">Mô tả bằng lời văn thường, trợ lý AI sẽ tự phân loại yêu cầu vào đúng bộ phận.</p>
+    </div>
+
+    <div id="formWrap" style="max-width:640px">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">✨ Trợ lý AI phân loại yêu cầu</div>
+        <p class="card-sub" style="margin-bottom:10px">Viết mô tả bên dưới rồi bấm "Phân loại bằng AI" – AI sẽ gợi ý bộ phận phù hợp kèm lý do.</p>
+        <button class="btn btn-accent btn-sm" id="aiClassifyBtn" type="button">✨ Phân loại bằng AI</button>
+        <div id="aiPanel"></div>
+      </div>
+
+      <form class="card" id="reqForm" novalidate>
+        <label class="field">
+          <span class="field-label">Loại dịch vụ <span class="req">*</span></span>
+          <select id="fType"></select>
+          <small class="field-err" id="eType"></small>
+        </label>
+        <label class="field">
+          <span class="field-label">Tiêu đề <span class="req">*</span></span>
+          <input type="text" id="fTitle" placeholder="Ví dụ: Gọi bữa trưa tại phòng">
+          <small class="field-err" id="eTitle"></small>
+        </label>
+        <label class="field">
+          <span class="field-label">Mô tả chi tiết <span class="req">*</span></span>
+          <textarea id="fDesc" rows="4" placeholder="Ví dụ: Một phần cơm sườn trứng ốp la và một ly trà đá, giao trước 12 giờ."></textarea>
+          <small class="field-err" id="eDesc"></small>
+        </label>
+        <button class="btn btn-primary" type="submit">Gửi yêu cầu</button>
+      </form>
+    </div>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/guest.js"></script>
+</body>
+</html>

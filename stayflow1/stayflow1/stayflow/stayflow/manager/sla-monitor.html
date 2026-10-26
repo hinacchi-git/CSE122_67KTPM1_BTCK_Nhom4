@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Theo dõi SLA – StayFlow</title>
+        <link rel="stylesheet" href="manager.css">
+    </head>
+    <body data-page="manager-sla-monitor">
+        <main class="page">
+            <div class="page-head">
+                <h1>Theo dõi SLA</h1>
+                <p class="page-sub">Giám sát thời gian cam kết của từng yêu cầu đang xử lý theo thời gian thực.</p>
+            </div>
+
+            <div class="grid-3 summary-row" id="summary"></div>
+
+            <div class="filters">
+                <select id="deptFilter">
+                    <option value="">Tất cả bộ phận</option>
+                    <option value="housekeeping">🧹 Buồng phòng</option>
+                    <option value="roomservice">🍽️ Dịch vụ ăn uống</option>
+                    <option value="maintenance">🔧 Bảo trì</option>
+                    <option value="frontdesk">🛎️ Lễ tân</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="confirmed">Đã điều phối</option>
+                    <option value="in-progress">Đang xử lý</option>
+                </select>
+            </div>
+
+            <section id="slaTable"></section>
+        </main>
+
+        <script src="../js/data.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/ui.js"></script>
+        <script src="../js/ai.js"></script>
+        <script src="common.js"></script>
+        <script src="sla-monitor.js"></script>
+    </body>
+</html>

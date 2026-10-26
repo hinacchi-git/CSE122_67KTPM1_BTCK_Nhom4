@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bảng nhiệm vụ – StayFlow</title>
+        <link rel="stylesheet" href="staff.css">
+    </head>
+    <body data-page="staff-task-board">
+        <main class="page">
+            <div class="page-head">
+                <h1>Bảng nhiệm vụ</h1>
+                <p class="page-sub">Các nhiệm vụ được Quản lý điều phối cho bạn. Cập nhật trạng thái để khách và quản lý theo dõi SLA.</p>
+            </div>
+
+            <div class="filters">
+                <input type="search" id="qSearch" placeholder="🔍 Tìm theo tiêu đề, mô tả..." aria-label="Tìm nhiệm vụ theo tiêu đề hoặc mô tả">
+                <select id="qPriority" aria-label="Lọc theo mức ưu tiên">
+                    <option value="">Tất cả ưu tiên</option>
+                    <option value="urgent">Khẩn cấp</option>
+                    <option value="high">Cao</option>
+                    <option value="medium">Trung bình</option>
+                    <option value="low">Thấp</option>
+                </select>
+            </div>
+
+            <p class="result-count" id="resultCount" role="status" aria-live="polite"></p>
+
+            <section id="app"></section>
+        </main>
+
+        <script src="../js/data.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/ui.js"></script>
+        <script src="../js/ai.js"></script>
+        <script src="common.js"></script>
+        <script src="task-board.js"></script>
+    </body>
+</html>

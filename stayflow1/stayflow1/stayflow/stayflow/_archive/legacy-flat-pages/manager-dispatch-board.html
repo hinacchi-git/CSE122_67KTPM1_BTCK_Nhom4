@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng điều phối – StayFlow</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="manager-dispatch-board">
+  <main class="page">
+    <div class="page-head">
+      <h1>Bảng điều phối</h1>
+      <p class="page-sub">Gán yêu cầu cho nhân viên đúng bộ phận, dùng AI gợi ý mức ưu tiên và duyệt đề xuất đổi ca.</p>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="pending">📥 Chờ điều phối</button>
+      <button class="tab-btn" data-tab="active">⚙️ Đang xử lý</button>
+      <button class="tab-btn" data-tab="done">✅ Hoàn thành</button>
+      <button class="tab-btn" data-tab="swaps">🔄 Đổi ca</button>
+    </div>
+
+    <div class="filters">
+      <select id="deptFilter">
+        <option value="">Tất cả bộ phận</option>
+        <option value="housekeeping">🧹 Buồng phòng</option>
+        <option value="roomservice">🍽️ Dịch vụ ăn uống</option>
+        <option value="maintenance">🔧 Bảo trì</option>
+        <option value="frontdesk">🛎️ Lễ tân</option>
+      </select>
+    </div>
+
+    <section id="tabList"></section>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/manager.js"></script>
+</body>
+</html>
